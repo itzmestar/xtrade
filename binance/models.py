@@ -21,7 +21,7 @@ class APIKey(models.Model):
     """
     Store API Key & Secret using encryption
     """
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         null=False

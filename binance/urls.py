@@ -3,6 +3,7 @@ from . import views
 
 app_name = 'binance'
 urlpatterns = [
-    path('login/', views.login),
-    path('index/', views.index)
+    path('keys/', views.keyform_view),
+    #path('login/', views.login),
+    #path('index/', views.index)
 ]
