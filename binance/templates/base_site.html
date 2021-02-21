@@ -12,10 +12,12 @@
 <!-- Header -->
 <div id="header">
     <div id="branding">
-        <h1 id="site-name"><a href="/reports/">xTrade</a></h1>
+        <h1 id="site-name">xTrade</h1>
     </div>
     <div id="user-tools">
-        welcome <b>{{ user.username }} | </b>
+        welcome <b>{{ user.username }}. </b>
+        <a href="/binance/home/">Home</a> <b>|</b>
+        <a href="{% url 'password_change' %}">Change password</a> <b>|</b>
         <a href="{% url 'logout' %}">Logout</a>
     </div>
 </div>

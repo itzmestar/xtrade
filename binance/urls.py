@@ -1,11 +1,10 @@
 from django.urls import path
 from . import views
-from binance.views import KeyFormView
+from binance.views import KeyFormView, HomeView
 
 app_name = 'binance'
 urlpatterns = [
-    #path('keys/', views.keyform_view),
     path('keys/', KeyFormView.as_view()),
-    #path('login/', views.login),
-    #path('index/', views.index)
+    path('home/', HomeView.as_view()),
+    #path('', HomeView.as_view(), name='home'),
 ]

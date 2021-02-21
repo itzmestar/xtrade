@@ -4,11 +4,13 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
-Hi {{ user.username }}!
-<p><a href="{% url 'logout' %}">Log Out</a></p>
-{% else %}
-<p>You are not logged in</p>
-<a href="{% url 'login' %}">Log In</a>
-{% endif %}
+    {% if api_key_saved %}
+        <center>
+            Your API Key-Secret are saved. <a href="/binance/keys/">Change Here.</a>
+        </center>
+    {% else %}
+        <center>
+            Your API Key-Secret are not saved. <a href="/binance/keys/">Save Now!</a>
+        </center>
+    {% endif %}
 {% endblock %}
