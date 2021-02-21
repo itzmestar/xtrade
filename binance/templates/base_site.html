@@ -1,0 +1,28 @@
+{% load static %}
+<!-- templates/base_site.html -->
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}xTrade{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="/static/binance/base.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/binance/dashboard.css"/>
+</head>
+<body>
+<!-- Header -->
+<div id="header">
+    <div id="branding">
+        <h1 id="site-name"><a href="/reports/">xTrade</a></h1>
+    </div>
+    <div id="user-tools">
+        welcome <b>{{ user.username }} | </b>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+</div>
+<!-- END Header -->
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+</body>
+</html>

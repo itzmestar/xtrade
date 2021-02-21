@@ -1,13 +1,29 @@
-<!-- templates/registration/login.html -->
-{% extends 'base.html' %}
+{% load static %}
+<html lang="en-us">
+<head>
+<title>Log in | xTrade site</title>
+<link rel="stylesheet" type="text/css" href="/static/binance/base.css">
+<link rel="stylesheet" type="text/css" href="/static/admin/css/login.css">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/responsive.css">
+    <meta name="robots" content="NONE,NOARCHIVE">
+</head>
+<body class=" login"
+      data-admin-utc-offset="19800">
 
-{% block title %}Login{% endblock %}
-
-{% block content %}
-<h2>Log In</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Log In</button>
-</form>
-{% endblock %}
+<!-- Container -->
+<div id="container">
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+            <h1 id="site-name">xTrade Login</h1>
+        </div>
+    </div>
+    {% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Log In</button>
+    </form>
+    {% endblock %}
+</div>
