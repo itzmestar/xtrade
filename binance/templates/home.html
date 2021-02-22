@@ -4,13 +4,51 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+<center>
+<table>
+    <tr>
+        <td></td>
+    </tr>
     {% if api_key_saved %}
-        <center>
+    <tr><td>
             Your API Key-Secret are saved. <a href="/binance/keys/">Change Here.</a>
-        </center>
+    </td>
+    </tr>
     {% else %}
-        <center>
+    <tr><td>
             Your API Key-Secret are not saved. <a href="/binance/keys/">Save Now!</a>
-        </center>
+        </td>
+    </tr>
     {% endif %}
+    <tr>
+        <td></td>
+    </tr>
+</table>
+</center>
+<div id="content-main">
+    <div class="app-{{ app.app_label }} module">
+        <center>
+<table>
+    {% ifnotequal 0 orders.count %}
+    <caption>
+        <center>Open Orders</center>
+    </caption>
+    <tr>
+    {% for key in orders.0 %}
+    <td><b>{{ key.upper }}</b></td>
+    {% endfor %}
+    </tr>
+    {% endifnotequal %}
+    {% for order in orders %}
+    <tr>
+        {% for val in order.values %}
+        <td>{{ val }}</td>
+        {% endfor %}
+        <td><a href="">Cancel Order</a></td>
+    </tr>
+    {% endfor %}
+</table>
+            </center>
+    </div>
+</div>
 {% endblock %}

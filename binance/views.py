@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.views import View
-from .forms import APIKeyForm
+from django import forms
+from .forms import APIKeyForm, BuyOrderForm, SellOrderForm
 from .models import APIKey
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 # Create your views here.
+from .utils import Binance
 
 
 @method_decorator(login_required, name='dispatch')
@@ -57,10 +59,114 @@ class HomeView(TemplateView):
             instance = APIKey.objects.get(user=user)
             api_key_saved = True
 
+            if request.session.get('binance'):
+                #binance = request.session['binance']
+                pass
+            else:
+                #binance = Binance(instance.api_key, instance.api_secret)
+                #request.session['binance'] = binance
+                pass
+
+            #open_orders = binance.get_current_open_orders()
+            open_orders = [
+                {
+                    "symbol": "LTCBTC",
+                    "orderId": 1,
+                    "orderListId": -1, # Unless OCO, the value will always be - 1
+                "clientOrderId": "myOrder1",
+                                 "price": "0.1",
+            "origQty": "1.0",
+            "executedQty": "0.0",
+            "cummulativeQuoteQty": "0.0",
+            "status": "NEW",
+            "timeInForce": "GTC",
+            "type": "LIMIT",
+            "side": "BUY",
+            "stopPrice": "0.0",
+            "icebergQty": "0.0",
+            "time": 1499827319559,
+            "updateTime": 1499827319559,
+            "isWorking": True,
+            "origQuoteOrderQty": "0.000000"
+            },
+
+                    {
+                        "symbol": "BTCUSDT",
+                        "orderId": 1,
+                        "orderListId": -1, # Unless OCO, the value will always be - 1
+                    "clientOrderId": "myOrder1",
+                                     "price": "0.1",
+            "origQty": "1.0",
+            "executedQty": "0.0",
+            "cummulativeQuoteQty": "0.0",
+            "status": "NEW",
+            "timeInForce": "GTC",
+            "type": "LIMIT",
+            "side": "BUY",
+            "stopPrice": "0.0",
+            "icebergQty": "0.0",
+            "time": 1499827319559,
+            "updateTime": 1499827319559,
+            "isWorking": True,
+            "origQuoteOrderQty": "0.000000"
+            }
+
+            ]
+            self.context['orders'] = open_orders
         except APIKey.DoesNotExist:
             api_key_saved = False
-            api_set_msg = ''
         self.context['api_key_saved'] = api_key_saved
+        return render(request, self.template_name, self.context)
+
+
+@method_decorator(login_required, name='dispatch')
+class BuyOrderView(TemplateView):
+    form_class = BuyOrderForm
+    template_name = 'buyform.html'
+    context = {}
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        self.context['form'] = form
+        return render(request, self.template_name, self.context)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        try:
+            # create object of form
+            form = self.form_class(request.POST)
+            # check if form data is valid
+            if form.is_valid():
+
+                return HttpResponseRedirect('/binance/home/')
+        except APIKey.DoesNotExist:
+            pass
+        self.context['form'] = form
+        return render(request, self.template_name, self.context)
+
+
+@method_decorator(login_required, name='dispatch')
+class SellOrderView(TemplateView):
+    form_class = SellOrderForm
+    template_name = 'sellform.html'
+    context = {}
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        self.context['form'] = form
+        return render(request, self.template_name, self.context)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        try:
+            # create object of form
+            form = self.form_class(request.POST)
+            # check if form data is valid
+            if form.is_valid():
+                return HttpResponseRedirect('/binance/home/')
+        except APIKey.DoesNotExist:
+            pass
+        self.context['form'] = form
         return render(request, self.template_name, self.context)
 
 
@@ -92,5 +198,4 @@ def keyform_view(request):
 
     context['form'] = form
     return render(request, "keyform.html", context)
-
 

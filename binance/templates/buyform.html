@@ -1,5 +1,5 @@
 {% extends 'base_site.html' %}
-{% block title %}API Keys{% endblock %}
+{% block title %}Trade Buy{% endblock %}
 {% block content %}
 <form method="POST">
     {% csrf_token %}
@@ -8,9 +8,7 @@
             {{ form.as_table }}
         </table>
         <table>
-            <tr>
-                <td><input type="submit" value="Submit"></td>
-            </tr>
+            <tr><td><input type="submit" value="Submit"></td></tr>
         </table>
     </center>
 </form>

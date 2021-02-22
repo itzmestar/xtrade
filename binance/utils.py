@@ -4,6 +4,9 @@ import requests
 from requests import Request, Session, Response
 from urllib.parse import urlencode
 
+#BASE_URL_SPOT = 'https://api.binance.com/'
+BASE_URL_SPOT = 'https://testnet.binance.vision'
+
 
 class Binance:
     """
@@ -15,12 +18,7 @@ class Binance:
         self._api_key = key
         self._api_secret = secret
         self._session = Session()
-        self._base_url_futures_coin = 'https://dapi.binance.com/'
-        self._base_url_spot = 'https://api.binance.com/'
-        self._base_url_futures_usdt = 'https://fapi.binance.com/'
         self.test = test
-        if test:
-            self._base_url_spot = 'https://testnet.binance.vision/'
 
     def _get(self, url, sign=False, params=None):
         return self._request('GET', url, sign=sign, params=params)
@@ -70,24 +68,38 @@ class Binance:
             'timestamp': self._get_timestamp()
         }
 
-        data = self._get(self._base_url_spot + path, sign=True, params=params)
+        data = self._get(BASE_URL_SPOT + path, sign=True, params=params)
         #LOG.debug(data)
         return data
 
-    def get_trading_symbols(self):
+    @staticmethod
+    def get_trading_symbols():
         """
-        returns lists of currently trading symbol
+        returns lists of currently trading symbol as tuple
         """
         path = '/api/v3/exchangeInfo'
 
         try:
-            response = requests.get(self._base_url_spot + path)
+            response = requests.get(BASE_URL_SPOT + path)
             if response.status_code != 200:
-                # LOG.error(response.content)
+                #print(response.status_code)
                 return list()
             data = response.json()
             symbols = data.get('symbols', [])
             symbols_list = [x['symbol'] for x in symbols if x['status'] == 'TRADING']
+            symbols_list = [(x, x) for x in symbols_list]
             return symbols_list
         except:
+            #print("Exp")
             return list()
+
+    def get_current_open_orders(self):
+        path = '/api/v3/openOrders'
+        params = {
+            'recvWindow': 60000,
+            'timestamp': self._get_timestamp()
+        }
+
+        data = self._get(BASE_URL_SPOT + path, sign=True, params=params)
+        # LOG.debug(data)
+        return data
