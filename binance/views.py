@@ -137,7 +137,10 @@ class BuyOrderView(TemplateView):
             form = self.form_class(request.POST)
             # check if form data is valid
             if form.is_valid():
-
+                param = {'symbol': None, 'type': None, 'price': None, 'quantity': None}
+                for key in param.keys():
+                    param[key] = form.cleaned_data[key]
+                print(param)
                 return HttpResponseRedirect('/binance/home/')
         except APIKey.DoesNotExist:
             pass
