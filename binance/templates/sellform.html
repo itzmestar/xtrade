@@ -1,10 +1,23 @@
 {% extends 'base_site.html' %}
-{% block title %}Trade sell{% endblock %}
+{% block title %}Trade Sell{% endblock %}
 {% block content %}
+<div class="breadcrumbs">
+    <center>SELL ORDER</center>
+</div>
+<center>
+    <div class="state">
+        Ticker Price:
+        <span class="users">?</span>
+    </div>
+</center>
+
 <form method="POST">
     {% csrf_token %}
     <center>
         <table>
+            <tr>
+                <td></td>
+            </tr>
             {{ form.as_table }}
         </table>
         <table>
@@ -14,4 +27,26 @@
         </table>
     </center>
 </form>
+<script>
+    var users = document.querySelector('.users'),
+    symbol = document.querySelector("#id_symbol"),
+    ws = new WebSocket("wss://stream.binance.com:9443/ws/" + symbol.value.toLowerCase() + "@bookTicker");
+    ws.onmessage = function (event) {
+        data = JSON.parse(event.data);
+        users.textContent = data.a;
+    };
+    document.getElementById('id_symbol').onchange = function() {
+        ws.close();
+        ws = new WebSocket("wss://stream.binance.com:9443/ws/" + symbol.value.toLowerCase() + "@bookTicker");
+        ws.onmessage = function (event) {
+            data = JSON.parse(event.data);
+            users.textContent = data.a;
+        };
+    };
+    document.getElementById('id_type').onchange = function() {
+        document.getElementById('id_price').disabled = this.value == 'MARKET';
+        document.getElementById('id_price').required = this.value == 'LIMIT';
+    };
+
+</script>
 {% endblock %}

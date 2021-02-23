@@ -247,11 +247,11 @@ table {
 }
 
 td, th {
-    font-size: 13px;
-    line-height: 16px;
+    font-size: 15px;
+    line-height: 25px;
     border-bottom: 1px solid #eee;
-    vertical-align: top;
-    padding: 8px;
+    vertical-align: middle;
+    padding: 10px;
     font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
 }
 
@@ -412,7 +412,7 @@ input, textarea, select, .form-row p, form .button {
     vertical-align: middle;
     font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
     font-weight: normal;
-    font-size: 13px;
+    font-size: 15px;
 }
 .form-row div.help {
     padding: 2px 3px;
@@ -647,10 +647,10 @@ div.system-message p.system-message-title {
 
 div.breadcrumbs {
     background: #79aec8;
-    padding: 10px 40px;
+    padding: 8px 40px;
     border: none;
-    font-size: 14px;
-    color: #c4dce8;
+    font-size: 15px;
+    color: #fff;
     text-align: left;
 }
 
