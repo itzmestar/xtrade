@@ -4,11 +4,13 @@ from django import forms
 from .models import APIKey
 from .utils import Binance
 
+SYMBOLS = Binance.get_trading_symbols()
+
 
 # create a buy order form
 class BuyOrderForm(forms.Form):
-    BUY_TYPE = [('MARKET', 'MARKET'), ('LIMIT', 'LIMIT'), ]
-    SYMBOLS = Binance.get_trading_symbols()
+    BUY_TYPE = [('MARKET', 'MARKET'), ('LIMIT', 'LIMIT')]
+
     symbol = forms.CharField(label='Symbol', required=True, widget=forms.Select(choices=SYMBOLS))
     type = forms.CharField(label='Buy Type', required=True, widget=forms.Select(choices=BUY_TYPE))
     price = forms.FloatField(label='Price', required=False, disabled=True)
@@ -18,7 +20,7 @@ class BuyOrderForm(forms.Form):
 # create a sell order form
 class SellOrderForm(forms.Form):
     SELL_TYPE = [('MARKET', 'MARKET'), ('LIMIT', 'LIMIT'), ]
-    SYMBOLS = Binance.get_trading_symbols()
+    #SYMBOLS = Binance.get_trading_symbols()
     symbol = forms.CharField(label='Symbol', required=True, widget=forms.Select(choices=SYMBOLS))
     type = forms.CharField(label='Sell Type', required=True, widget=forms.Select(choices=SELL_TYPE))
     price = forms.FloatField(label='Price', required=False, disabled=True)

@@ -7,6 +7,7 @@ from .models import APIKey
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
+from django.contrib import messages
 # Create your views here.
 from .utils import Binance
 
@@ -133,17 +134,31 @@ class BuyOrderView(TemplateView):
     def post(self, request, *args, **kwargs):
         user = request.user
         try:
+            instance = APIKey.objects.get(user=user)
             # create object of form
             form = self.form_class(request.POST)
             # check if form data is valid
             if form.is_valid():
+                #print(form.cleaned_data)
                 param = {'symbol': None, 'type': None, 'price': None, 'quantity': None}
                 for key in param.keys():
                     param[key] = form.cleaned_data[key]
-                print(param)
-                return HttpResponseRedirect('/binance/home/')
+
+                if request.POST.get('price'):
+                    param['price'] = request.POST.get('price')
+
+                binance = Binance(key=instance.api_key, secret=instance.api_secret)
+                response = binance.place_buy_order(**param)
+                if 'status' in response:
+                    messages.add_message(request, messages.SUCCESS, 'Buy Order Submitted Successfully.')
+                else:
+                    messages.add_message(request, messages.ERROR, "Buy Order Couldn't be submitted.")
+                return HttpResponseRedirect('/binance/buy/')
         except APIKey.DoesNotExist:
-            pass
+            # if key doesn't exist redirect to key page
+            messages.add_message(request, messages.WARNING, 'Please update Key-Secret.')
+            return HttpResponseRedirect('/binance/keys/')
+
         self.context['form'] = form
         return render(request, self.template_name, self.context)
 
@@ -171,6 +186,11 @@ class SellOrderView(TemplateView):
             pass
         self.context['form'] = form
         return render(request, self.template_name, self.context)
+
+
+@method_decorator(login_required, name='dispatch')
+class CancelOrderView(TemplateView):
+    pass
 
 
 @login_required

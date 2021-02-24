@@ -5,6 +5,14 @@
 <div class="breadcrumbs">
     <center>BUY ORDER</center>
 </div>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li
+    {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 <center>
 <div class="state">
     Ticker Price:
@@ -41,8 +49,8 @@
         };
     };
     document.getElementById('id_type').onchange = function() {
-        document.getElementById('id_price').disabled = this.value == 'MARKET';
         document.getElementById('id_price').required = this.value == 'LIMIT';
+        document.getElementById('id_price').disabled = this.value == 'MARKET';
     };
 </script>
 {% endblock %}
