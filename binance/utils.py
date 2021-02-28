@@ -115,18 +115,6 @@ class Binance:
         LOG.debug(pformat(data))
         return data
 
-    def order_buy_market(self, **params):
-        """
-        Place a market buy order
-        """
-        params.update({'side': 'BUY'})
-
-    def order_sell_market(self, **params):
-        """
-        Place a market sell order
-        """
-        params.update({'side': 'SELL'})
-
     def place_buy_order(self, **params):
         """
         API call POST /api/v3/order (HMAC SHA256)
@@ -152,11 +140,26 @@ class Binance:
 
     def place_sell_order(self, **params):
         """
-
+        API call POST /api/v3/order (HMAC SHA256)
         """
-        params.update({'side': 'SELL'})
+        path = '/api/v3/order/test'
+        if settings.PROD:
+            path = '/api/v3/order'
 
-        pass
+        params.update({
+            'side': 'SELL',
+            'recvWindow': 60000,
+            'timestamp': self._get_timestamp()
+        })
+
+        if params.get('type') == 'MARKET':
+            del params['price']
+        else:
+            params.update({'timeInForce': 'GTC'})
+        # LOG.debug(pformat(params))
+        data = self._post(BASE_URL_SPOT + path, sign=True, params=params)
+        LOG.debug(pformat(data))
+        return data
 
     def place_cancel_order(self, symbol, order_id):
         """

@@ -111,6 +111,7 @@ class HomeView(TemplateView):
         self.context['api_key_saved'] = api_key_saved
         return render(request, self.template_name, self.context)
 
+
 @method_decorator(login_required, name='dispatch')
 class BuyOrderView(TemplateView):
     form_class = BuyOrderForm
@@ -141,7 +142,10 @@ class BuyOrderView(TemplateView):
                 binance = Binance(key=instance.api_key, secret=instance.api_secret)
                 response = binance.place_buy_order(**param)
                 if 'status' in response:
-                    messages.add_message(request, messages.SUCCESS, 'Buy Order Submitted Successfully.')
+                    messages.add_message(request, messages.SUCCESS,
+                                         f"Buy Order Submitted Successfully. Status:{response['status']}")
+                elif 'msg' in response:
+                    messages.add_message(request, messages.ERROR, f"Error in Order: {response['msg']}")
                 else:
                     messages.add_message(request, messages.ERROR, "Buy Order Couldn't be submitted.")
                 return HttpResponseRedirect('/binance/buy/')
@@ -168,13 +172,34 @@ class SellOrderView(TemplateView):
     def post(self, request, *args, **kwargs):
         user = request.user
         try:
+            instance = APIKey.objects.get(user=user)
             # create object of form
             form = self.form_class(request.POST)
             # check if form data is valid
             if form.is_valid():
-                return HttpResponseRedirect('/binance/home/')
+                # print(form.cleaned_data)
+                param = {'symbol': None, 'type': None, 'price': None, 'quantity': None}
+                for key in param.keys():
+                    param[key] = form.cleaned_data[key]
+
+                if request.POST.get('price'):
+                    param['price'] = request.POST.get('price')
+
+                binance = Binance(key=instance.api_key, secret=instance.api_secret)
+                response = binance.place_buy_order(**param)
+                if 'status' in response:
+                    messages.add_message(request, messages.SUCCESS,
+                                         f"Sell Order Submitted Successfully. Status:{response['status']}")
+                elif 'msg' in response:
+                    messages.add_message(request, messages.ERROR, f"Error in Order: {response['msg']}")
+                else:
+                    messages.add_message(request, messages.ERROR, "Sell Order Couldn't be submitted.")
+                return HttpResponseRedirect('/binance/sell/')
         except APIKey.DoesNotExist:
-            pass
+            # if key doesn't exist redirect to key page
+            messages.add_message(request, messages.WARNING, 'Please update Key-Secret.')
+            return HttpResponseRedirect('/binance/keys/')
+
         self.context['form'] = form
         return render(request, self.template_name, self.context)
 
