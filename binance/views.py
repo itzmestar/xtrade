@@ -59,17 +59,9 @@ class HomeView(TemplateView):
             # try to fetch API keys
             instance = APIKey.objects.get(user=user)
             api_key_saved = True
-
-            if request.session.get('binance'):
-                #binance = request.session['binance']
-                pass
-            else:
-                #binance = Binance(instance.api_key, instance.api_secret)
-                #request.session['binance'] = binance
-                pass
-
-            #open_orders = binance.get_current_open_orders()
-            open_orders = [
+            binance = Binance(key=instance.api_key, secret=instance.api_secret)
+            open_orders = binance.get_current_open_orders()
+            '''open_orders = [
                 {
                     "symbol": "LTCBTC",
                     "orderId": 1,
@@ -112,13 +104,12 @@ class HomeView(TemplateView):
             "origQuoteOrderQty": "0.000000"
             }
 
-            ]
+            ]'''
             self.context['orders'] = open_orders
         except APIKey.DoesNotExist:
             api_key_saved = False
         self.context['api_key_saved'] = api_key_saved
         return render(request, self.template_name, self.context)
-
 
 @method_decorator(login_required, name='dispatch')
 class BuyOrderView(TemplateView):

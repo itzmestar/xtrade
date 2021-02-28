@@ -5,8 +5,12 @@ from requests import Request, Session, Response
 from urllib.parse import urlencode
 import logging
 from pprint import pformat
-#BASE_URL_SPOT = 'https://api.binance.com/'
+from django.conf import settings
+
 BASE_URL_SPOT = 'https://testnet.binance.vision'
+if settings.PROD:
+    BASE_URL_SPOT = 'https://api.binance.com/'
+
 LOG = logging.getLogger(__name__)
 
 
@@ -68,7 +72,6 @@ class Binance:
         API to call: GET /sapi/v1/capital/config/getall (HMAC SHA256)
         :return:
         """
-        #LOG.info("Started")
         path = '/api/v3/account'
 
         params = {
@@ -77,7 +80,7 @@ class Binance:
         }
 
         data = self._get(BASE_URL_SPOT + path, sign=True, params=params)
-        #LOG.debug(data)
+        LOG.debug(pformat(data))
         return data
 
     @staticmethod
@@ -97,8 +100,8 @@ class Binance:
             symbols_list = [x['symbol'] for x in symbols if x['status'] == 'TRADING']
             symbols_list = [(x, x) for x in symbols_list]
             return symbols_list
-        except:
-            #print("Exp")
+        except Exception as e:
+            LOG.exception(e)
             return list()
 
     def get_current_open_orders(self):
@@ -109,8 +112,6 @@ class Binance:
         }
 
         data = self._get(BASE_URL_SPOT + path, sign=True, params=params)
-        #print(data)
-
         LOG.debug(pformat(data))
         return data
 
@@ -131,20 +132,21 @@ class Binance:
         API call POST /api/v3/order (HMAC SHA256)
         """
         path = '/api/v3/order/test'
+        if settings.PROD:
+            path = '/api/v3/order'
+
         params.update({
             'side': 'BUY',
             'recvWindow': 60000,
             'timestamp': self._get_timestamp()
         })
-        LOG.debug(pformat(params))
+
         if params.get('type') == 'MARKET':
             del params['price']
         else:
             params.update({'timeInForce': 'GTC'})
-        LOG.debug(pformat(params))
+        #LOG.debug(pformat(params))
         data = self._post(BASE_URL_SPOT + path, sign=True, params=params)
-        #data = self.get_account_information()
-        #print(data)
         LOG.debug(pformat(data))
         return data
 
