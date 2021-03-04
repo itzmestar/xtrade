@@ -9,7 +9,7 @@ from django.conf import settings
 
 BASE_URL_SPOT = 'https://testnet.binance.vision'
 if settings.PROD:
-    BASE_URL_SPOT = 'https://api.binance.com/'
+    BASE_URL_SPOT = 'https://api.binance.com'
 
 LOG = logging.getLogger(__name__)
 
@@ -165,7 +165,9 @@ class Binance:
         """
         API to call: DELETE /api/v3/order (HMAC SHA256)
         """
-        path = '/api/v3/order'
+        path = '/api/v3/order/test'
+        if settings.PROD:
+            path = '/api/v3/order'
 
         params = {
             'symbol': symbol,
@@ -177,3 +179,25 @@ class Binance:
         data = self._delete(BASE_URL_SPOT + path, sign=True, params=params)
         LOG.debug(pformat(data))
         return data
+
+    # ==== websocket ListenKey ==== #
+    def create_listen_key(self):
+        """
+        API to call POST /api/v3/userDataStream
+        """
+        path = '/api/v3/userDataStream'
+
+        data = self._post(BASE_URL_SPOT + path, sign=True)
+        LOG.debug(pformat(data))
+        return data
+
+    def close_listen_key(self):
+        """
+        API to call DELETE /api/v3/userDataStream
+        """
+        path = '/api/v3/userDataStream'
+
+        data = self._delete(BASE_URL_SPOT + path, sign=True)
+        LOG.debug(pformat(data))
+        return data
+
