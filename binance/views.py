@@ -34,6 +34,9 @@ class KeyFormView(TemplateView):
             if form.is_valid():
                 # save the form data to model
                 form.save()
+                messages.add_message(request, messages.SUCCESS,
+                                     "Key saved Successfully.")
+
                 return HttpResponseRedirect('/binance/home/')
         except APIKey.DoesNotExist:
             form = self.form_class(request.POST)
@@ -43,6 +46,8 @@ class KeyFormView(TemplateView):
                 # commit=False tells Django that "Don't send this to database yet.
                 apikey.user = request.user  # Set the user object here
                 apikey.save()  # Now send it to DB
+                messages.add_message(request, messages.SUCCESS,
+                                     "Key saved Successfully.")
                 return HttpResponseRedirect('/binance/home/')
         self.context['form'] = form
         return render(request, self.template_name, self.context)
