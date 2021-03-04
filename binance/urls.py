@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from binance.views import KeyFormView, HomeView, BuyOrderView, SellOrderView
+from binance.views import KeyFormView, HomeView, BuyOrderView, SellOrderView, CancelOrderView
 
 app_name = 'binance'
 urlpatterns = [
@@ -8,4 +8,5 @@ urlpatterns = [
     path('home/', HomeView.as_view()),
     path('buy/', BuyOrderView.as_view()),
     path('sell/', SellOrderView.as_view()),
+    path('cancel/', CancelOrderView.as_view()),
 ]
