@@ -165,7 +165,7 @@ class Binance:
         """
         API to call: DELETE /api/v3/order (HMAC SHA256)
         """
-        path = '/api/v3/order/test'
+        path = '/api/v3/order'
         if settings.PROD:
             path = '/api/v3/order'
 

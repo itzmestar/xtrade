@@ -61,7 +61,7 @@ class HomeView(TemplateView):
             api_key_saved = True
             binance = Binance(key=instance.api_key, secret=instance.api_secret)
             open_orders = binance.get_current_open_orders()
-            '''open_orders = [
+            open_orders = [
                 {
                     "symbol": "LTCBTC",
                     "orderId": 1,
@@ -85,7 +85,7 @@ class HomeView(TemplateView):
 
                     {
                         "symbol": "BTCUSDT",
-                        "orderId": 1,
+                        "orderId": 2,
                         "orderListId": -1, # Unless OCO, the value will always be - 1
                     "clientOrderId": "myOrder1",
                                      "price": "0.1",
@@ -103,8 +103,7 @@ class HomeView(TemplateView):
             "isWorking": True,
             "origQuoteOrderQty": "0.000000"
             }
-
-            ]'''
+            ]
             self.context['orders'] = open_orders
             self.context["listenKey"]= "btcusdt"
         except APIKey.DoesNotExist:
@@ -206,8 +205,36 @@ class SellOrderView(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class CancelOrderView(TemplateView):
-    pass
+class CancelOrderView(View):
+
+    def get(self, request):
+        user = request.user
+        try:
+            instance = APIKey.objects.get(user=user)
+            order_id = self.request.GET.get('order_id')
+            symbol = self.request.GET.get('symbol')
+            print(f'order_id={order_id} symbol={symbol}')
+            if order_id is None or symbol is None:
+                messages.add_message(request, messages.ERROR, "Can't Cancel. SYMBOL or Order ID missing.")
+                return HttpResponseRedirect('/binance/home/')
+
+            binance = Binance(key=instance.api_key, secret=instance.api_secret)
+            response = binance.place_cancel_order(symbol=symbol, order_id=order_id)
+            if 'status' in response:
+                messages.add_message(request, messages.SUCCESS,
+                                     f"Cancel Order Submitted Successfully. Status:{response['status']}")
+            elif 'msg' in response:
+                messages.add_message(request, messages.ERROR, f"Error in Cancel: {response['msg']}")
+            else:
+                messages.add_message(request, messages.ERROR, "Cancel Order Couldn't be submitted.")
+
+        except APIKey.DoesNotExist:
+            # if key doesn't exist redirect to key page
+            messages.add_message(request, messages.WARNING, 'Please update Key-Secret.')
+            return HttpResponseRedirect('/binance/keys/')
+
+        # <view logic>
+        return HttpResponseRedirect('/binance/home/')
 
 
 @login_required

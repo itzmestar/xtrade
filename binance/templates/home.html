@@ -4,6 +4,15 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li
+            {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
 <center>
 <table>
     <tr>
@@ -30,22 +39,26 @@
     <div class="app-{{ app.app_label }} module">
         <center>
 <table>
-    {% ifnotequal 0 orders.count %}
+    {% if 0 != orders.count %}
     <caption>
         <center>Open Orders</center>
     </caption>
     <tr>
     {% for key in orders.0 %}
+        {% if 'orderListId' != key and 'clientOrderId' != key %}
     <td><b>{{ key.upper }}</b></td>
+        {% endif %}
     {% endfor %}
     </tr>
-    {% endifnotequal %}
+    {% endif %}
     {% for order in orders %}
     <tr>
-        {% for val in order.values %}
+        {% for key,val in order.items %}
+        {% if 'orderListId' != key and 'clientOrderId' != key %}
         <td>{{ val }}</td>
+        {% endif %}
         {% endfor %}
-        <td><a href="">Cancel Order</a></td>
+        <td><a href="/binance/cancel/?order_id={{order.orderId}}&symbol={{order.symbol}}">Cancel Order</a></td>
     </tr>
     {% endfor %}
 </table>
