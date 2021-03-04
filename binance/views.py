@@ -106,6 +106,7 @@ class HomeView(TemplateView):
 
             ]'''
             self.context['orders'] = open_orders
+            self.context["listenKey"]= "btcusdt"
         except APIKey.DoesNotExist:
             api_key_saved = False
         self.context['api_key_saved'] = api_key_saved
@@ -186,7 +187,7 @@ class SellOrderView(TemplateView):
                     param['price'] = request.POST.get('price')
 
                 binance = Binance(key=instance.api_key, secret=instance.api_secret)
-                response = binance.place_buy_order(**param)
+                response = binance.place_sell_order(**param)
                 if 'status' in response:
                     messages.add_message(request, messages.SUCCESS,
                                          f"Sell Order Submitted Successfully. Status:{response['status']}")
