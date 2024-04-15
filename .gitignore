@@ -1,1 +1,6 @@
 /db.sqlite3
+.idea
+binance/__pycache__/
+binance/migrations/__pycache__/
+xtrade/__pycache__/
+
