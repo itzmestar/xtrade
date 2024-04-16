@@ -12,6 +12,12 @@ python3 -m pip install venv
 python3 -m venv venv310
 ```
 
+Use virtual env:
+
+```commandline
+source venv310/bin/activate
+```
+
 Install requirements:
 ```commandline
 python3 -m pip install -r requirements.txt
