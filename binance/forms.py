@@ -34,3 +34,9 @@ class APIKeyForm(forms.ModelForm):
         model = APIKey
         fields = ['api_key', 'api_secret']
 
+
+class TradeHistoryForm(forms.Form):
+
+    symbol = forms.CharField(label='Symbol', required=True, widget=forms.Select(choices=SYMBOLS))
+
+
