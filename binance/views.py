@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.views import View
 from django import forms
-from .forms import APIKeyForm, BuyOrderForm, SellOrderForm
+from .forms import APIKeyForm, BuyOrderForm, SellOrderForm, TradeHistoryForm
 from .models import APIKey
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -66,7 +66,7 @@ class HomeView(TemplateView):
             api_key_saved = True
             binance = Binance(key=instance.api_key, secret=instance.api_secret)
             open_orders = binance.get_current_open_orders()
-            open_orders = [
+            '''open_orders = [
                 {
                     "symbol": "LTCBTC",
                     "orderId": 1,
@@ -108,7 +108,7 @@ class HomeView(TemplateView):
             "isWorking": True,
             "origQuoteOrderQty": "0.000000"
             }
-            ]
+            ]'''
             self.context['orders'] = open_orders
             self.context["listenKey"]= "btcusdt"
         except APIKey.DoesNotExist:
@@ -271,3 +271,35 @@ def keyform_view(request):
     context['form'] = form
     return render(request, "keyform.html", context)
 
+
+@method_decorator(login_required, name='dispatch')
+class TradeHistoryView(TemplateView):
+    form_class = TradeHistoryForm
+    template_name = 'trade_history_form.html'
+    context = {}
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        self.context['form'] = form
+        return render(request, self.template_name, self.context)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        try:
+            instance = APIKey.objects.get(user=user)
+            # create object of form
+            form = self.form_class(request.POST)
+            # check if form data is valid
+            if form.is_valid():
+
+                binance = Binance(key=instance.api_key, secret=instance.api_secret)
+                response = binance.fetch_trade_history(symbol=form.cleaned_data['symbol'])
+
+                return HttpResponseRedirect('/binance/trade-history/')
+        except APIKey.DoesNotExist:
+            # if key doesn't exist redirect to key page
+            messages.add_message(request, messages.WARNING, 'Please update Key-Secret.')
+            return HttpResponseRedirect('/binance/keys/')
+
+        self.context['form'] = form
+        return render(request, self.template_name, self.context)
