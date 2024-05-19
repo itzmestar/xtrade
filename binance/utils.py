@@ -98,7 +98,9 @@ class Binance:
             data = response.json()
             symbols = data.get('symbols', [])
             symbols_list = [x['symbol'] for x in symbols if x['status'] == 'TRADING']
+            symbols_list.sort()
             symbols_list = [(x, x) for x in symbols_list]
+
             return symbols_list
         except Exception as e:
             LOG.exception(e)
@@ -177,6 +179,21 @@ class Binance:
              }
 
         data = self._delete(BASE_URL_SPOT + path, sign=True, params=params)
+        LOG.debug(pformat(data))
+        return data
+
+    def fetch_trade_history(self, symbol):
+        """
+        Fetch trade history for a symbol
+        """
+        path = '/api/v3/myTrades'
+        params = {
+            'symbol': symbol,
+            'recvWindow': 60000,
+            'timestamp': self._get_timestamp()
+        }
+
+        data = self._get(BASE_URL_SPOT + path, sign=True, params=params)
         LOG.debug(pformat(data))
         return data
 
