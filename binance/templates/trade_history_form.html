@@ -1,0 +1,33 @@
+{% extends 'base_site.html' %}
+{% block title %}Trade History{% endblock %}
+{% block content %}
+<div class="breadcrumbs">
+    <center>Trade History</center>
+</div>
+{% if messages %}
+<ul class="messagelist">
+    {% for message in messages %}
+    <li
+            {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+    <center>
+        <table>
+            <tr>
+                <td></td>
+            </tr>
+            {{ form.as_table }}
+        </table>
+        <table>
+            <tr>
+                <td><input type="submit" value="Submit"></td>
+            </tr>
+        </table>
+    </center>
+</form>
+{% endblock %}
