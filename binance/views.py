@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from django.contrib import messages
 # Create your views here.
 from .utils import Binance
+from datetime import datetime
 
 
 @method_decorator(login_required, name='dispatch')
@@ -294,8 +295,13 @@ class TradeHistoryView(TemplateView):
 
                 binance = Binance(key=instance.api_key, secret=instance.api_secret)
                 response = binance.fetch_trade_history(symbol=form.cleaned_data['symbol'])
+                # convert timestamp to datetime string
+                for r in response:
+                    r['time'] = datetime.fromtimestamp(r['time']//1000).strftime('%Y-%m-%d %H:%M:%S')
+                self.context['trade_history'] = response
+                return render(request, 'trade_history.html', self.context)
 
-                return HttpResponseRedirect('/binance/trade-history/')
+                # return HttpResponseRedirect('/binance/trade-history/')
         except APIKey.DoesNotExist:
             # if key doesn't exist redirect to key page
             messages.add_message(request, messages.WARNING, 'Please update Key-Secret.')

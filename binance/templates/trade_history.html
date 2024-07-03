@@ -1,0 +1,36 @@
+{% extends 'base_site.html' %}
+{% block title %}Trade History{% endblock %}
+{% block content %}
+<div class="breadcrumbs">
+    <center>Trade History</center>
+</div>
+{% if messages %}
+<ul class="messagelist">
+    {% for message in messages %}
+    <li
+            {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<table>
+    {% if 0 != trade_history.count %}
+    <tr>
+    {% for key in trade_history.0 %}
+    <td><b>{{ key.upper }}</b></td>
+    {% endfor %}
+    </tr>
+    {% endif %}
+    {% for history in trade_history %}
+    <tr>
+        {% for key,val in history.items %}
+        <td>{{ val }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+            </center>
+    </div>
+</div>
+{% endblock %}
