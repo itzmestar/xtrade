@@ -14,20 +14,24 @@
 </ul>
 {% endif %}
 
-<table>
+<table class="table">
     {% if 0 != trade_history.count %}
-    <tr>
+    <thead>
+    <tr class="table-dark">
     {% for key in trade_history.0 %}
     <td><b>{{ key.upper }}</b></td>
     {% endfor %}
     </tr>
+    <thead>
     {% endif %}
     {% for history in trade_history %}
-    <tr>
+    <tbody>
+    <tr  class="table-primary">
         {% for key,val in history.items %}
         <td>{{ val }}</td>
         {% endfor %}
     </tr>
+    <tbody>
     {% endfor %}
 </table>
             </center>
