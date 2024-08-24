@@ -16,10 +16,15 @@
         <h1 id="site-name">xTrade</h1>
     </div>
     <div id="user-tools">
-        welcome <b>{{ user.username }}. </b>
-        <a href="/binance/home/">Home</a> <b>|</b>
-        <a href="{% url 'password_change' %}">Change password</a> <b>|</b>
-        <a href="{% url 'logout' %}">Logout</a>
+        welcome <b>{{ user.username }} </b>
+    </div>
+    <div class="btn-group">
+        <a class="btn btn-link btn-sm" href="/binance/home/">HOME</a>
+        <a class="btn btn-link btn-sm" href="{% url 'password_change' %}">CHANGE PASSWORD</a>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="btn btn-link btn-sm" type="submit">LOGOUT</button>
+        </form>
     </div>
 </div>
 <!-- END Header -->
