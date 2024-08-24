@@ -3,13 +3,15 @@
 webapp to Trade on Binance.
 It uses Binance API to send/cancel orders.
 
+Trade history can also be viewed which is not available on Binance App.
+
 ## Setup steps:
 
 create a virtual env with python3:
 
 ```commandline
-python3 -m pip install venv
-python3 -m venv venv310
+python -m pip install venv
+python -m venv venv310
 ```
 
 Use virtual env:
@@ -26,23 +28,23 @@ git clone https://github.com/itzmestar/xtrade
 Install requirements:
 ```commandline
 cd xtrade
-python3 -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 Create DB:
 ```commandline
-python3 manage.py makemigrations
-python3 manage.py migrate
+python manage.py makemigrations
+python manage.py migrate
 ```
 
 Create a superuser:
 ```commandline
-python3 manage.py createsuperuser
+python manage.py createsuperuser
 ```
 
 ## To Run local server:
 ```commandline
-python3 manage.py runserver
+python manage.py runserver
 ```
 
 this will run the webapp on localhost on port 8000
